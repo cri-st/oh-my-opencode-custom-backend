@@ -6,6 +6,7 @@ import { createOracleAgent, ORACLE_PROMPT_METADATA } from "./oracle"
 import { createLibrarianAgent, LIBRARIAN_PROMPT_METADATA } from "./librarian"
 import { createExploreAgent, EXPLORE_PROMPT_METADATA } from "./explore"
 import { createFrontendUiUxEngineerAgent, FRONTEND_PROMPT_METADATA } from "./frontend-ui-ux-engineer"
+import { createBackendFoundingEngineerAgent, BACKEND_FOUNDING_ENGINEER_PROMPT_METADATA } from "./backend-founding-engineer"
 import { createDocumentWriterAgent, DOCUMENT_WRITER_PROMPT_METADATA } from "./document-writer"
 import { createMultimodalLookerAgent, MULTIMODAL_LOOKER_PROMPT_METADATA } from "./multimodal-looker"
 import { createMetisAgent } from "./metis"
@@ -24,6 +25,7 @@ const agentSources: Record<BuiltinAgentName, AgentSource> = {
   librarian: createLibrarianAgent,
   explore: createExploreAgent,
   "frontend-ui-ux-engineer": createFrontendUiUxEngineerAgent,
+  "backend-founding-engineer": createBackendFoundingEngineerAgent,
   "document-writer": createDocumentWriterAgent,
   "multimodal-looker": createMultimodalLookerAgent,
   "Metis (Plan Consultant)": createMetisAgent,
@@ -40,6 +42,7 @@ const agentMetadata: Partial<Record<BuiltinAgentName, AgentPromptMetadata>> = {
   librarian: LIBRARIAN_PROMPT_METADATA,
   explore: EXPLORE_PROMPT_METADATA,
   "frontend-ui-ux-engineer": FRONTEND_PROMPT_METADATA,
+  "backend-founding-engineer": BACKEND_FOUNDING_ENGINEER_PROMPT_METADATA,
   "document-writer": DOCUMENT_WRITER_PROMPT_METADATA,
   "multimodal-looker": MULTIMODAL_LOOKER_PROMPT_METADATA,
 }

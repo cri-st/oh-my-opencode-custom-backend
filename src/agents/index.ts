@@ -4,6 +4,7 @@ import { oracleAgent } from "./oracle"
 import { librarianAgent } from "./librarian"
 import { exploreAgent } from "./explore"
 import { frontendUiUxEngineerAgent } from "./frontend-ui-ux-engineer"
+import { backendFoundingEngineerAgent } from "./backend-founding-engineer"
 import { documentWriterAgent } from "./document-writer"
 import { multimodalLookerAgent } from "./multimodal-looker"
 import { metisAgent } from "./metis"
@@ -16,6 +17,7 @@ export const builtinAgents: Record<string, AgentConfig> = {
   librarian: librarianAgent,
   explore: exploreAgent,
   "frontend-ui-ux-engineer": frontendUiUxEngineerAgent,
+  "backend-founding-engineer": backendFoundingEngineerAgent,
   "document-writer": documentWriterAgent,
   "multimodal-looker": multimodalLookerAgent,
   "Metis (Plan Consultant)": metisAgent,

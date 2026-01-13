@@ -62,6 +62,7 @@ export type BuiltinAgentName =
   | "librarian"
   | "explore"
   | "frontend-ui-ux-engineer"
+  | "backend-founding-engineer"
   | "document-writer"
   | "multimodal-looker"
   | "Metis (Plan Consultant)"
