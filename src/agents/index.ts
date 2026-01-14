@@ -1,5 +1,6 @@
 import type { AgentConfig } from "@opencode-ai/sdk"
 import { sisyphusAgent } from "./sisyphus"
+import { atlasAgent } from "./atlas"
 import { oracleAgent } from "./oracle"
 import { librarianAgent } from "./librarian"
 import { exploreAgent } from "./explore"
@@ -13,6 +14,7 @@ import { momusAgent } from "./momus"
 
 export const builtinAgents: Record<string, AgentConfig> = {
   Sisyphus: sisyphusAgent,
+  atlas: atlasAgent,
   oracle: oracleAgent,
   librarian: librarianAgent,
   explore: exploreAgent,

@@ -146,7 +146,7 @@ Approach:
 </Category_Context>
 
 <Caller_Warning>
-⚠️ THIS CATEGORY USES A MID-TIER MODEL (claude-sonnet-4-5).
+⚠️ THIS CATEGORY USES A MID-TIER MODEL (claude-sonnet-4.5).
 
 While capable, this model benefits significantly from EXPLICIT instructions.
 
@@ -209,7 +209,7 @@ export const DEFAULT_CATEGORIES: Record<string, CategoryConfig> = {
     temperature: 0.5,
   },
   general: {
-    model: "anthropic/claude-sonnet-4-5",
+    model: "google/gemini-3-pro-preview",
     temperature: 0.3,
   },
 }
