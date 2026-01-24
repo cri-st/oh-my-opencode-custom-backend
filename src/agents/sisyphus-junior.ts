@@ -1,10 +1,9 @@
 import type { AgentConfig } from "@opencode-ai/sdk"
 import { isGptModel } from "./types"
-import type { AgentOverrideConfig, CategoryConfig } from "../config/schema"
+import type { AgentOverrideConfig } from "../config/schema"
 import {
   createAgentToolRestrictions,
-  migrateAgentConfig,
-  supportsNewPermissionSystem,
+  type PermissionValue,
 } from "../shared/permission-compat"
 
 const SISYPHUS_JUNIOR_PROMPT = `<Role>
@@ -15,7 +14,7 @@ Execute tasks directly. NEVER delegate or spawn other agents.
 <Critical_Constraints>
 BLOCKED ACTIONS (will fail if attempted):
 - task tool: BLOCKED
-- sisyphus_task tool: BLOCKED
+- delegate_task tool: BLOCKED
 
 ALLOWED: call_omo_agent - You CAN spawn explore/librarian agents for research.
 You work ALONE for implementation. No delegation of implementation tasks.
@@ -30,11 +29,12 @@ NOTEPAD PATH: .sisyphus/notepads/{plan-name}/
 - problems.md: Record unresolved issues, technical debt
 
 You SHOULD append findings to notepad files after completing work.
+IMPORTANT: Always APPEND to notepad files - never overwrite or use Edit tool.
 
 ## Plan Location (READ ONLY)
 PLAN PATH: .sisyphus/plans/{plan-name}.md
 
-⚠️⚠️⚠️ CRITICAL RULE: NEVER MODIFY THE PLAN FILE ⚠️⚠️⚠️
+CRITICAL RULE: NEVER MODIFY THE PLAN FILE
 
 The plan file (.sisyphus/plans/*.md) is SACRED and READ-ONLY.
 - You may READ the plan to understand tasks
@@ -76,7 +76,7 @@ function buildSisyphusJuniorPrompt(promptAppend?: string): string {
 
 // Core tools that Sisyphus-Junior must NEVER have access to
 // Note: call_omo_agent is ALLOWED so subagents can spawn explore/librarian
-const BLOCKED_TOOLS = ["task", "sisyphus_task"]
+const BLOCKED_TOOLS = ["task", "delegate_task"]
 
 export const SISYPHUS_JUNIOR_DEFAULTS = {
   model: "google/gemini-3-flash",
@@ -99,26 +99,14 @@ export function createSisyphusJuniorAgentWithOverrides(
 
   const baseRestrictions = createAgentToolRestrictions(BLOCKED_TOOLS)
 
-  let toolsConfig: Record<string, unknown> = {}
-  if (supportsNewPermissionSystem()) {
-    const userPermission = (override?.permission ?? {}) as Record<string, string>
-    const basePermission = (baseRestrictions as { permission: Record<string, string> }).permission
-    const merged: Record<string, string> = { ...userPermission }
-    for (const tool of BLOCKED_TOOLS) {
-      merged[tool] = "deny"
-    }
-    merged.call_omo_agent = "allow"
-    toolsConfig = { permission: { ...merged, ...basePermission } }
-  } else {
-    const userTools = override?.tools ?? {}
-    const baseTools = (baseRestrictions as { tools: Record<string, boolean> }).tools
-    const merged: Record<string, boolean> = { ...userTools }
-    for (const tool of BLOCKED_TOOLS) {
-      merged[tool] = false
-    }
-    merged.call_omo_agent = true
-    toolsConfig = { tools: { ...merged, ...baseTools } }
+  const userPermission = (override?.permission ?? {}) as Record<string, PermissionValue>
+  const basePermission = baseRestrictions.permission
+  const merged: Record<string, PermissionValue> = { ...userPermission }
+  for (const tool of BLOCKED_TOOLS) {
+    merged[tool] = "deny"
   }
+  merged.call_omo_agent = "allow"
+  const toolsConfig = { permission: { ...merged, ...basePermission } }
 
   const base: AgentConfig = {
     description: override?.description ??
@@ -134,59 +122,6 @@ export function createSisyphusJuniorAgentWithOverrides(
 
   if (override?.top_p !== undefined) {
     base.top_p = override.top_p
-  }
-
-  if (isGptModel(model)) {
-    return { ...base, reasoningEffort: "medium" } as AgentConfig
-  }
-
-  return {
-    ...base,
-    thinking: { type: "enabled", budgetTokens: 32000 },
-  } as AgentConfig
-}
-
-export function createSisyphusJuniorAgent(
-  categoryConfig: CategoryConfig,
-  promptAppend?: string
-): AgentConfig {
-  const prompt = buildSisyphusJuniorPrompt(promptAppend)
-  const model = categoryConfig.model
-  const baseRestrictions = createAgentToolRestrictions(BLOCKED_TOOLS)
-  const mergedConfig = migrateAgentConfig({
-    ...baseRestrictions,
-    ...(categoryConfig.tools ? { tools: categoryConfig.tools } : {}),
-  })
-
-
-  const base: AgentConfig = {
-    description:
-      "Sisyphus-Junior - Focused task executor. Same discipline, no delegation.",
-    mode: "subagent" as const,
-    model,
-    maxTokens: categoryConfig.maxTokens ?? 64000,
-    prompt,
-    color: "#20B2AA",
-    ...mergedConfig,
-  }
-
-  if (categoryConfig.temperature !== undefined) {
-    base.temperature = categoryConfig.temperature
-  }
-  if (categoryConfig.top_p !== undefined) {
-    base.top_p = categoryConfig.top_p
-  }
-
-  if (categoryConfig.thinking) {
-    return { ...base, thinking: categoryConfig.thinking } as AgentConfig
-  }
-
-  if (categoryConfig.reasoningEffort) {
-    return {
-      ...base,
-      reasoningEffort: categoryConfig.reasoningEffort,
-      textVerbosity: categoryConfig.textVerbosity,
-    } as AgentConfig
   }
 
   if (isGptModel(model)) {

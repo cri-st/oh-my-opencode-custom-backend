@@ -1,54 +1,71 @@
 # HOOKS KNOWLEDGE BASE
 
 ## OVERVIEW
-22+ lifecycle hooks intercepting/modifying agent behavior via PreToolUse, PostToolUse, UserPromptSubmit, and more.
+
+31 lifecycle hooks intercepting/modifying agent behavior. Events: PreToolUse, PostToolUse, UserPromptSubmit, Stop, onSummarize.
 
 ## STRUCTURE
+
 ```
 hooks/
-├── sisyphus-orchestrator/      # Main orchestration & agent delegation (684 lines)
-├── anthropic-context-window-limit-recovery/  # Auto-summarize at token limit (554 lines)
-├── todo-continuation-enforcer.ts # Force completion of [ ] items (445 lines)
-├── ralph-loop/                 # Self-referential dev loop (364 lines)
-├── claude-code-hooks/          # settings.json hook compatibility layer
-├── comment-checker/            # Prevents AI slop/excessive comments
-├── auto-slash-command/         # Detects and executes /command patterns
-├── rules-injector/             # Conditional rules from .claude/rules/
-├── directory-agents-injector/  # Auto-injects local AGENTS.md files
-├── directory-readme-injector/  # Auto-injects local README.md files
-├── preemptive-compaction/      # Triggers summary at 85% usage
-├── edit-error-recovery/        # Recovers from tool execution failures
-├── thinking-block-validator/   # Ensures valid <thinking> format
-├── context-window-monitor.ts   # Reminds agents of remaining headroom
-├── session-recovery/           # Auto-recovers from session crashes
-├── start-work/                 # Initializes work sessions (ulw/ulw)
-├── think-mode/                 # Dynamic thinking budget adjustment
-├── background-notification/    # OS notification on task completion
-└── tool-output-truncator.ts    # Prevents context bloat from verbose tools
+├── atlas/                      # Main orchestration (773 lines)
+├── anthropic-context-window-limit-recovery/  # Auto-summarize
+├── todo-continuation-enforcer.ts # Force TODO completion
+├── ralph-loop/                 # Self-referential dev loop
+├── claude-code-hooks/          # settings.json compat layer - see AGENTS.md
+├── comment-checker/            # Prevents AI slop
+├── auto-slash-command/         # Detects /command patterns
+├── rules-injector/             # Conditional rules
+├── directory-agents-injector/  # Auto-injects AGENTS.md
+├── directory-readme-injector/  # Auto-injects README.md
+├── edit-error-recovery/        # Recovers from failures
+├── thinking-block-validator/   # Ensures valid <thinking>
+├── context-window-monitor.ts   # Reminds of headroom
+├── session-recovery/           # Auto-recovers from crashes
+├── think-mode/                 # Dynamic thinking budget
+├── keyword-detector/           # ultrawork/search/analyze modes
+├── background-notification/    # OS notification
+├── prometheus-md-only/         # Planner read-only mode
+├── agent-usage-reminder/       # Specialized agent hints
+├── auto-update-checker/        # Plugin update check
+└── tool-output-truncator.ts    # Prevents context bloat
 ```
 
 ## HOOK EVENTS
-| Event | Timing | Can Block | Description |
-|-------|--------|-----------|-------------|
-| PreToolUse | Before tool | Yes | Validate/modify inputs (e.g., directory-agents-injector) |
-| PostToolUse | After tool | No | Append context/warnings (e.g., edit-error-recovery) |
-| UserPromptSubmit | On prompt | Yes | Filter/modify user input (e.g., keyword-detector) |
-| Stop | Session idle | No | Auto-continue tasks (e.g., todo-continuation-enforcer) |
-| onSummarize | Compaction | No | State preservation (e.g., compaction-context-injector) |
+
+| Event | Timing | Can Block | Use Case |
+|-------|--------|-----------|----------|
+| PreToolUse | Before tool | Yes | Validate/modify inputs |
+| PostToolUse | After tool | No | Append warnings, truncate |
+| UserPromptSubmit | On prompt | Yes | Keyword detection |
+| Stop | Session idle | No | Auto-continue |
+| onSummarize | Compaction | No | Preserve state |
+
+## EXECUTION ORDER
+
+**chat.message**: keywordDetector → claudeCodeHooks → autoSlashCommand → startWork → ralphLoop
+
+**tool.execute.before**: claudeCodeHooks → nonInteractiveEnv → commentChecker → directoryAgentsInjector → rulesInjector
+
+**tool.execute.after**: editErrorRecovery → delegateTaskRetry → commentChecker → toolOutputTruncator → claudeCodeHooks
 
 ## HOW TO ADD
-1. Create `src/hooks/name/` with `index.ts` factory (e.g., `createMyHook`).
-2. Implement `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, or `onSummarize`.
-3. Register in `src/hooks/index.ts`.
+
+1. Create `src/hooks/name/` with `index.ts` exporting `createMyHook(ctx)`
+2. Add hook name to `HookNameSchema` in `src/config/schema.ts`
+3. Register in `src/index.ts`:
+   ```typescript
+   const myHook = isHookEnabled("my-hook") ? createMyHook(ctx) : null
+   ```
 
 ## PATTERNS
-- **Context Injection**: Use `PreToolUse` to prepend instructions to tool inputs.
-- **Resilience**: Implement `edit-error-recovery` style logic to retry failed tools.
-- **Telegraphic UI**: Use `PostToolUse` to add brief warnings without bloating transcript.
-- **Statelessness**: Prefer local file storage for state that must persist across sessions.
+
+- **Session-scoped state**: `Map<sessionID, Set<string>>`
+- **Conditional execution**: Check `input.tool` before processing
+- **Output modification**: `output.output += "\n${REMINDER}"`
 
 ## ANTI-PATTERNS
-- **Blocking**: Avoid blocking tools unless critical (use warnings in `PostToolUse` instead).
-- **Latency**: No heavy computation in `PreToolUse`; it slows every interaction.
-- **Redundancy**: Don't inject the same file multiple times; track state in session storage.
-- **Prose**: Never use verbose prose in hook outputs; keep it technical and brief.
+
+- **Blocking non-critical**: Use PostToolUse warnings instead
+- **Heavy computation**: Keep PreToolUse light
+- **Redundant injection**: Track injected files

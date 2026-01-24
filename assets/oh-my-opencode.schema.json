@@ -20,7 +20,8 @@
       "items": {
         "type": "string",
         "enum": [
-          "Sisyphus",
+          "sisyphus",
+          "prometheus",
           "oracle",
           "librarian",
           "explore",
@@ -28,9 +29,9 @@
           "backend-founding-engineer",
           "document-writer",
           "multimodal-looker",
-          "Metis (Plan Consultant)",
-          "Momus (Plan Reviewer)",
-          "orchestrator-sisyphus"
+          "metis",
+          "momus",
+          "atlas"
         ]
       }
     },
@@ -70,18 +71,16 @@
           "agent-usage-reminder",
           "non-interactive-env",
           "interactive-bash-session",
-          "empty-message-sanitizer",
           "thinking-block-validator",
           "ralph-loop",
-          "preemptive-compaction",
           "compaction-context-injector",
           "claude-code-hooks",
           "auto-slash-command",
           "edit-error-recovery",
-          "sisyphus-task-retry",
+          "delegate-task-retry",
           "prometheus-md-only",
           "start-work",
-          "sisyphus-orchestrator"
+          "atlas"
         ]
       }
     },
@@ -350,7 +349,7 @@
             }
           }
         },
-        "Sisyphus": {
+        "sisyphus": {
           "type": "object",
           "properties": {
             "model": {
@@ -476,7 +475,7 @@
             }
           }
         },
-        "Sisyphus-Junior": {
+        "sisyphus-junior": {
           "type": "object",
           "properties": {
             "model": {
@@ -728,7 +727,7 @@
             }
           }
         },
-        "Prometheus (Planner)": {
+        "prometheus": {
           "type": "object",
           "properties": {
             "model": {
@@ -854,7 +853,7 @@
             }
           }
         },
-        "Metis (Plan Consultant)": {
+        "metis": {
           "type": "object",
           "properties": {
             "model": {
@@ -980,7 +979,7 @@
             }
           }
         },
-        "Momus (Plan Reviewer)": {
+        "momus": {
           "type": "object",
           "properties": {
             "model": {
@@ -1988,7 +1987,7 @@
             }
           }
         },
-        "orchestrator-sisyphus": {
+        "atlas": {
           "type": "object",
           "properties": {
             "model": {
@@ -2124,6 +2123,9 @@
       "additionalProperties": {
         "type": "object",
         "properties": {
+          "description": {
+            "type": "string"
+          },
           "model": {
             "type": "string"
           },
@@ -2188,11 +2190,11 @@
           },
           "prompt_append": {
             "type": "string"
+          },
+          "is_unstable_agent": {
+            "type": "boolean"
           }
-        },
-        "required": [
-          "model"
-        ]
+        }
       }
     },
     "claude_code": {
@@ -2260,14 +2262,6 @@
         },
         "auto_resume": {
           "type": "boolean"
-        },
-        "preemptive_compaction": {
-          "type": "boolean"
-        },
-        "preemptive_compaction_threshold": {
-          "type": "number",
-          "minimum": 0.5,
-          "maximum": 0.95
         },
         "truncate_all_tool_outputs": {
           "type": "boolean"
@@ -2361,9 +2355,6 @@
               }
             }
           }
-        },
-        "dcp_for_compaction": {
-          "type": "boolean"
         }
       }
     },
@@ -2521,7 +2512,7 @@
           },
           "additionalProperties": {
             "type": "number",
-            "minimum": 1
+            "minimum": 0
           }
         },
         "modelConcurrency": {
@@ -2531,8 +2522,12 @@
           },
           "additionalProperties": {
             "type": "number",
-            "minimum": 1
+            "minimum": 0
           }
+        },
+        "staleTimeoutMs": {
+          "type": "number",
+          "minimum": 60000
         }
       }
     },

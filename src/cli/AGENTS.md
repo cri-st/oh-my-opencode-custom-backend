@@ -1,57 +1,71 @@
 # CLI KNOWLEDGE BASE
 
 ## OVERVIEW
-CLI for oh-my-opencode: interactive installer, health diagnostics (doctor), runtime launcher. Entry: `bunx oh-my-opencode`.
+
+CLI entry: `bunx oh-my-opencode`. Interactive installer, doctor diagnostics. Commander.js + @clack/prompts.
 
 ## STRUCTURE
+
 ```
 cli/
-├── index.ts              # Commander.js entry, subcommand routing (146 lines)
-├── install.ts            # Interactive TUI installer (462 lines)
-├── config-manager.ts     # JSONC parsing, env detection (730 lines)
-├── types.ts              # CLI-specific types
-├── doctor/               # Health check system
-│   ├── index.ts          # Doctor command entry
-│   ├── runner.ts         # Health check orchestration
-│   ├── constants.ts      # Check categories
-│   ├── types.ts          # Check result interfaces
-│   └── checks/           # 10 check modules (14 individual checks)
-├── get-local-version/    # Version detection
-└── run/                  # OpenCode session launcher
-    ├── completion.ts     # Completion logic
-    └── events.ts         # Event handling
+├── index.ts              # Commander.js entry
+├── install.ts            # Interactive TUI (520 lines)
+├── config-manager.ts     # JSONC parsing (641 lines)
+├── types.ts              # InstallArgs, InstallConfig
+├── doctor/
+│   ├── index.ts          # Doctor entry
+│   ├── runner.ts         # Check orchestration
+│   ├── formatter.ts      # Colored output
+│   ├── constants.ts      # Check IDs, symbols
+│   ├── types.ts          # CheckResult, CheckDefinition
+│   └── checks/           # 14 checks, 21 files
+│       ├── version.ts    # OpenCode + plugin version
+│       ├── config.ts     # JSONC validity, Zod
+│       ├── auth.ts       # Anthropic, OpenAI, Google
+│       ├── dependencies.ts # AST-Grep, Comment Checker
+│       ├── lsp.ts        # LSP connectivity
+│       ├── mcp.ts        # MCP validation
+│       └── gh.ts         # GitHub CLI
+├── run/
+│   └── index.ts          # Session launcher
+└── get-local-version/
+    └── index.ts          # Version detection
 ```
 
-## CLI COMMANDS
+## COMMANDS
+
 | Command | Purpose |
 |---------|---------|
-| `install` | Interactive setup wizard with subscription detection |
-| `doctor` | Environment health checks (LSP, Auth, Config, Deps) |
-| `run` | Launch OpenCode session with todo/background completion enforcement |
-| `get-local-version` | Detect and return local plugin version & update status |
+| `install` | Interactive setup |
+| `doctor` | 14 health checks |
+| `run` | Launch session |
+| `get-local-version` | Version check |
 
-## DOCTOR CHECKS
-14 checks in `doctor/checks/`:
-- `version.ts`: OpenCode >= 1.0.150 & plugin update status
-- `config.ts`: Plugin registration & JSONC validity
-- `dependencies.ts`: AST-Grep (CLI/NAPI), Comment Checker
-- `auth.ts`: Anthropic, OpenAI, Google (Antigravity)
-- `lsp.ts`, `mcp.ts`: Tool connectivity checks
-- `gh.ts`: GitHub CLI availability
+## DOCTOR CATEGORIES
 
-## CONFIG-MANAGER
-- **JSONC**: Supports comments and trailing commas via `parseJsonc`
-- **Multi-source**: Merges User (`~/.config/opencode/`) + Project (`.opencode/`)
-- **Validation**: Strict Zod schema with error aggregation for `doctor`
-- **Env**: Detects `OPENCODE_CONFIG_DIR` for profile isolation
+| Category | Checks |
+|----------|--------|
+| installation | opencode, plugin |
+| configuration | config validity, Zod |
+| authentication | anthropic, openai, google |
+| dependencies | ast-grep, comment-checker |
+| tools | LSP, MCP |
+| updates | version comparison |
 
 ## HOW TO ADD CHECK
-1. Create `src/cli/doctor/checks/my-check.ts` returning `DoctorCheck`
-2. Export from `checks/index.ts` and add to `getAllCheckDefinitions()`
-3. Use `CheckContext` for shared utilities (LSP, Auth)
+
+1. Create `src/cli/doctor/checks/my-check.ts`
+2. Export from `checks/index.ts`
+3. Add to `getAllCheckDefinitions()`
+
+## TUI FRAMEWORK
+
+- **@clack/prompts**: `select()`, `spinner()`, `intro()`
+- **picocolors**: Terminal colors
+- **Symbols**: ✓ (pass), ✗ (fail), ⚠ (warn)
 
 ## ANTI-PATTERNS
-- Blocking prompts in non-TTY (check `process.stdout.isTTY`)
-- Direct `JSON.parse` (breaks JSONC compatibility)
-- Silent failures (always return `warn` or `fail` in `doctor`)
-- Environment-specific hardcoding (use `ConfigManager`)
+
+- **Blocking in non-TTY**: Check `process.stdout.isTTY`
+- **Direct JSON.parse**: Use `parseJsonc()`
+- **Silent failures**: Return warn/fail in doctor
