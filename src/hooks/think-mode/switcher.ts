@@ -92,7 +92,7 @@ const HIGH_VARIANT_MAP: Record<string, string> = {
   // Gemini
   "gemini-3-pro": "gemini-3-pro-high",
   "gemini-3-pro-low": "gemini-3-pro-high",
-  "gemini-3-pro-preview": "gemini-3-pro-preview-high",
+  "antigravity-gemini-3-pro": "antigravity-gemini-3-pro-high",
   "gemini-3-flash": "gemini-3-flash-high",
   "gemini-3-flash-preview": "gemini-3-flash-preview-high",
   // GPT-5

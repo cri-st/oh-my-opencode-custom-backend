@@ -50,7 +50,7 @@ describe("think-mode switcher", () => {
     describe("Gemini models via github-copilot", () => {
       it("should resolve github-copilot Gemini Pro to google config", () => {
         // #given a github-copilot provider with Gemini Pro model
-        const config = getThinkingConfig("github-copilot", "gemini-3-pro-preview")
+        const config = getThinkingConfig("github-copilot", "antigravity-gemini-3-pro")
 
         // #then should return google thinking config
         expect(config).not.toBeNull()
@@ -159,8 +159,8 @@ describe("think-mode switcher", () => {
 
       it("should handle Gemini preview variants", () => {
         // #given Gemini preview model IDs
-        expect(getHighVariant("gemini-3-pro-preview")).toBe(
-          "gemini-3-pro-preview-high"
+        expect(getHighVariant("antigravity-gemini-3-pro")).toBe(
+          "antigravity-gemini-3-pro-high"
         )
         expect(getHighVariant("gemini-3-flash-preview")).toBe(
           "gemini-3-flash-preview-high"

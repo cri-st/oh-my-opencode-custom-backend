@@ -83,15 +83,19 @@ oh-my-opencode/
 
 ## AGENT MODELS
 
-| Agent | Model | Purpose |
-|-------|-------|---------|
-| Sisyphus | anthropic/claude-opus-4-5 | Primary orchestrator |
+| Agent | Default Model | Purpose |
+|-------|---------------|---------|
+| Sisyphus | anthropic/claude-opus-4-5 | Primary orchestrator with extended thinking |
 | Atlas | anthropic/claude-opus-4-5 | Master orchestrator |
-| oracle | openai/gpt-5.2 | Consultation, debugging |
-| librarian | opencode/glm-4.7-free | Docs, GitHub search |
-| explore | opencode/grok-code | Fast codebase grep |
+| oracle | openai/gpt-5.2 | Read-only consultation. High-IQ debugging, architecture |
+| librarian | opencode/glm-4.7-free | Multi-repo analysis, docs |
+| explore | opencode/grok-code | Fast codebase exploration |
+| frontend-ui-ux-engineer | google/antigravity-gemini-3-pro | UI generation |
+| document-writer | google/antigravity-gemini-3-pro | Technical docs |
 | multimodal-looker | google/gemini-3-flash-preview | PDF/image analysis |
-| Prometheus | anthropic/claude-opus-4-5 | Strategic planning |
+| Prometheus (Planner) | anthropic/claude-opus-4-5 | Strategic planning, interview-driven |
+| Metis (Plan Consultant) | anthropic/claude-sonnet-4-5 | Pre-planning analysis |
+| Momus (Plan Reviewer) | anthropic/claude-sonnet-4-5 | Plan validation |
 
 ## COMMANDS
 

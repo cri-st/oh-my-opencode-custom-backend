@@ -3,7 +3,7 @@ import type { AgentPromptMetadata } from "./types"
 import { isGptModel } from "./types"
 import { createAgentToolRestrictions } from "../shared/permission-compat"
 
-const DEFAULT_MODEL = "google/gemini-3-pro-preview"
+const DEFAULT_MODEL = "google/antigravity-gemini-3-pro"
 
 export const ATLAS_PROMPT_METADATA: AgentPromptMetadata = {
   category: "specialist",
