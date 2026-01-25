@@ -31,6 +31,7 @@ import {
   createStartWorkHook,
   createAtlasHook,
   createPrometheusMdOnlyHook,
+  createQuestionLabelTruncatorHook,
 } from "./hooks";
 import {
   contextCollector,
@@ -203,9 +204,11 @@ const OhMyOpenCodePlugin: Plugin = async (ctx) => {
     ? createPrometheusMdOnlyHook(ctx)
     : null;
 
+  const questionLabelTruncator = createQuestionLabelTruncatorHook();
+
   const taskResumeInfo = createTaskResumeInfoHook();
 
-  const backgroundManager = new BackgroundManager(ctx);
+  const backgroundManager = new BackgroundManager(ctx, pluginConfig.background_task);
 
   const atlasHook = isHookEnabled("atlas")
     ? createAtlasHook(ctx, { directory: ctx.directory, backgroundManager })
@@ -484,6 +487,7 @@ const OhMyOpenCodePlugin: Plugin = async (ctx) => {
     },
 
     "tool.execute.before": async (input, output) => {
+      await questionLabelTruncator["tool.execute.before"]?.(input, output);
       await claudeCodeHooks["tool.execute.before"](input, output);
       await nonInteractiveEnv?.["tool.execute.before"](input, output);
       await commentChecker?.["tool.execute.before"](input, output);

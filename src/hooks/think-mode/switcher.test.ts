@@ -65,7 +65,7 @@ describe("think-mode switcher", () => {
         // #given a github-copilot provider with Gemini Flash model
         const config = getThinkingConfig(
           "github-copilot",
-          "gemini-3-flash-preview"
+          "gemini-3-flash"
         )
 
         // #then should return google thinking config
@@ -162,8 +162,8 @@ describe("think-mode switcher", () => {
         expect(getHighVariant("antigravity-gemini-3-pro")).toBe(
           "antigravity-gemini-3-pro-high"
         )
-        expect(getHighVariant("gemini-3-flash-preview")).toBe(
-          "gemini-3-flash-preview-high"
+        expect(getHighVariant("gemini-3-flash")).toBe(
+          "gemini-3-flash-high"
         )
       })
 

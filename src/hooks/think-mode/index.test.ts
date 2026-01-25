@@ -125,7 +125,7 @@ describe("createThinkModeHook integration", () => {
         const hook = createThinkModeHook()
         const input = createMockInput(
           "github-copilot",
-          "gemini-3-flash-preview",
+          "gemini-3-flash",
           "ultrathink"
         )
 
@@ -134,7 +134,7 @@ describe("createThinkModeHook integration", () => {
 
         // #then should upgrade to high variant
         const message = input.message as MessageWithInjectedProps
-        expect(input.message.model?.modelID).toBe("gemini-3-flash-preview-high")
+        expect(input.message.model?.modelID).toBe("gemini-3-flash-high")
         expect(message.providerOptions).toBeDefined()
       })
     })

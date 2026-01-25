@@ -153,56 +153,6 @@ Approach:
 - Documentation, READMEs, articles, technical writing
 </Category_Context>`
 
-
-Balanced execution mindset:
-- Practical, straightforward approach
-- Good enough is good enough
-- Focus on getting things done
-
-Approach:
-- Standard best practices
-- Reasonable trade-offs
-- Efficient completion
-</Category_Context>
-
-<Caller_Warning>
-⚠️ THIS CATEGORY USES A MID-TIER MODEL (claude-sonnet-4.5).
-
-While capable, this model benefits significantly from EXPLICIT instructions.
-
-**PROVIDE CLEAR STRUCTURE:**
-1. MUST DO: Enumerate required actions explicitly - don't assume inference
-2. MUST NOT DO: State forbidden actions to prevent scope creep or wrong approaches
-3. EXPECTED OUTPUT: Define concrete success criteria and deliverables
-
-**COMMON PITFALLS WITHOUT EXPLICIT INSTRUCTIONS:**
-- Model may take shortcuts that miss edge cases
-- Implicit requirements get overlooked
-- Output format may not match expectations
-- Scope may expand beyond intended boundaries
-
-**RECOMMENDED PROMPT PATTERN:**
-\`\`\`
-TASK: [Clear, single-purpose goal]
-
-CONTEXT: [Relevant background the model needs]
-
-MUST DO:
-- [Explicit requirement 1]
-- [Explicit requirement 2]
-
-MUST NOT DO:
-- [Boundary/constraint 1]
-- [Boundary/constraint 2]
-
-EXPECTED OUTPUT:
-- [What success looks like]
-- [How to verify completion]
-\`\`\`
-
-The more explicit your prompt, the better the results.
-</Caller_Warning>`
-
 export const DEFAULT_CATEGORIES: Record<string, CategoryConfig> = {
   "visual-engineering": {
     model: "google/antigravity-gemini-3-pro",
@@ -232,6 +182,8 @@ export const DEFAULT_CATEGORIES: Record<string, CategoryConfig> = {
     model: "google/antigravity-gemini-3-pro",
     temperature: 0.3,
   },
+  "unspecified-low": { model: "anthropic/claude-sonnet-4-5" },
+  "unspecified-high": { model: "anthropic/claude-opus-4-5", variant: "max" },
 }
 
 export const CATEGORY_PROMPT_APPENDS: Record<string, string> = {

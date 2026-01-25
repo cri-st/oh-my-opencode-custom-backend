@@ -91,11 +91,13 @@ oh-my-opencode/
 | librarian | opencode/glm-4.7-free | Multi-repo analysis, docs |
 | explore | opencode/grok-code | Fast codebase exploration |
 | frontend-ui-ux-engineer | google/antigravity-gemini-3-pro | UI generation |
+| backend-founding-engineer | google/antigravity-gemini-3-pro | Backend architecture & implementation |
 | document-writer | google/antigravity-gemini-3-pro | Technical docs |
 | multimodal-looker | google/gemini-3-flash-preview | PDF/image analysis |
 | Prometheus (Planner) | anthropic/claude-opus-4-5 | Strategic planning, interview-driven |
 | Metis (Plan Consultant) | anthropic/claude-sonnet-4-5 | Pre-planning analysis |
 | Momus (Plan Reviewer) | anthropic/claude-sonnet-4-5 | Plan validation |
+| Sisyphus-Junior | anthropic/claude-sonnet-4-5 | Category-spawned executor |
 
 ## COMMANDS
 
